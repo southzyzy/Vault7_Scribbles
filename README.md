@@ -126,6 +126,33 @@ WikiLeaks’ copy of the CIA’s Scribbles user manual says the tool will not wo
 > Read More: <a href="https://wikileaks.org/vault7/#Scribbles"> WikiLeaks#Scribbles </a>  | <a href="https://threatpost.com/wikileaks-reveals-cia-tool-scribbles-for-document-tracking/125299/"> ThreatPost: WikiLeaks Reveals CIA Tool ‘Scribbles’ For Document Tracking </a>
 
 ### Dynamic Analysis
+Dynamic analysis shows that upon execution, the executable will first check if the file/PID exists in the watermark log .\WatermarkLog.tsv, user will be promted if the file has already been watermarked before and will have the option to either Remake, Create new watermark or Skip the file.
+
+The executable will then upzip the contents of the documents and insert the beacon in a form of a watermark image and repack it, outputing the file to ./OutputDir
+
+Each watermarked document is tagged with a PID and stored in the WatermarkLog.tsv which contains 
+1. File_Input_Host
+2. File_Input_Path
+3. File_Input_Hash
+4. Watermark_TimeStamp
+5. Watermark_Tag / PID
+
+On the C2 server side, once the watermarked document is opened, the C2 will recieve a GET request trying to get a randomly generated file in a directory which can be set in the 'ScribblesOutput_exampleParams.xml'
+
+The information that can be retrieved from this GET request are
+1. Watermark PID
+2. Host IP
+3. Timestamp
+
+But we have also proven that more information can be retrieved, in this case we used a modified http.server.py and recieved the following additional information
+1. Windows Version
+2. MS Office Version
+3. Name of file opened (By checking the PID and pulling the information from 'watermarklog.tsv')
+4. Accessed Date and Time
+
+Lastly would be that amongst the 3 office file extentions (.doc, .xlxs, .pptx), when watermarking a .pptx document a prompt will be shown stating that the user will have to click enable editing by default while the other 2 documents will show up as 'Read-Only' plain text view when opened from a different host than the one who created the document.
+The beacons in both cases will not activate unless the user clicks on the 'Enable Editing' in which will activate the beacon and call back to the C2
+
 
 ---
 
