@@ -48,7 +48,7 @@ This program requires the following prerequisite to run smoothly:
 Very simple HTTP server in python for logging requests
 Usage::
     ./server.py [<port>]
-"""
+"""python
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import logging
 import pandas as pd
